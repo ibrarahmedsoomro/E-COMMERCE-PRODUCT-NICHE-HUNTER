@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>HUNTER 3D // Autonomous Product & Niche Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #07090e;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(6, 182, 212, 0.5);
+      
+      --primary-cyan: #06b6d4;
+      --primary-blue: #3b82f6;
+      --primary-purple: #8b5cf6;
+      --primary-emerald: #10b981;
+      --primary-amber: #f59e0b;
+      --primary-rose: #f43f5e;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --glow-cyan: 0 0 25px rgba(6, 182, 212, 0.35);
+      --glow-emerald: 0 0 25px rgba(16, 185, 129, 0.4);
+      --glow-purple: 0 0 25px rgba(139, 92, 246, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden !important;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-gradient-glow {
+      position: fixed;
+      top: -20%;
+      left: 20%;
+      width: 60vw;
+      height: 60vh;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+
+    .bg-grid-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top Nav Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 2.5rem;
+      background: rgba(7, 9, 14, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+
+    .logo-mark {
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow-cyan);
+      font-size: 1.2rem;
+    }
+
+    .logo-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--primary-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.45rem 0.95rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+
+    .status-indicator.live {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background-color: var(--primary-emerald);
+      box-shadow: 0 0 10px var(--primary-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    /* Main Container */
+    .portal-container {
+      width: 94%;
+      max-width: 1440px;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hero Search Section */
+    .hero-search-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .hero-title-area {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-main-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-description {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .hero-search-bar {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: 74px;
+      padding: 0.45rem 0.65rem 0.45rem 1.4rem;
+      border-radius: 9999px;
+      border: 2px solid rgba(6, 182, 212, 0.45);
+      box-shadow: 0 16px 45px rgba(6, 182, 212, 0.22), 0 0 30px rgba(139, 92, 246, 0.18);
+      background: rgba(15, 23, 42, 0.94);
+      gap: 1rem;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-search-bar:focus-within {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4), 0 0 40px rgba(139, 92, 246, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 1rem;
+      height: 100%;
+    }
+
+    .search-icon-orb {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+
+    .search-input-box input {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      font-size: 1.2rem !important;
+      font-weight: 600 !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+      width: 100%;
+      font-family: var(--font-sans) !important;
+    }
+
+    .search-input-box input::placeholder {
+      color: #64748b;
+      font-size: 1.02rem;
+      font-weight: 400;
+    }
+
+    .clear-search-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .clear-search-btn:hover {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--primary-rose);
+    }
+
+    .hunt-submit-btn {
+      height: 58px;
+      padding: 0 2.5rem;
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+      border: none;
+      border-radius: 9999px;
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.45);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .hunt-submit-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 35px rgba(139, 92, 246, 0.65);
+    }
+
+    /* Trending Quick-Pills */
+    .trending-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      padding: 0 0.5rem;
+    }
+
+    .trend-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .trend-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.95rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .trend-pill:hover {
+      background: rgba(6, 182, 212, 0.12);
+      border-color: var(--primary-cyan);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Trending Deck Section */
+    .trending-deck-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .deck-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .deck-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .deck-icon-glow {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .deck-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .deck-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* 100% Fluid Responsive Cards Grid - No Horizontal Scrollbar */
+    .niche-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+    }
+
+    .niche-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.15rem;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.15rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .niche-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-cyan), var(--primary-purple));
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .niche-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(6, 182, 212, 0.45);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.2);
+    }
+
+    .niche-card:hover::before {
+      opacity: 1;
+    }
+
+    .niche-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .niche-card-rank {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary-cyan);
+      background: rgba(6, 182, 212, 0.12);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .cagr-badge {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    .cagr-badge.green {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary-emerald);
+    }
+
+    .niche-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .niche-card-emoji {
+      font-size: 2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .niche-card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .niche-card-cat {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .niche-card-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .niche-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .niche-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .niche-stat-val {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .niche-stat-val.green {
+      color: var(--primary-emerald);
+    }
+
+    .niche-card-hunt-btn {
+      width: 100%;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .niche-card:hover .niche-card-hunt-btn {
+      background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+
+    @media (max-width: 900px) {
+      .app-header { flex-direction: column; gap: 0.75rem; padding: 1rem; }
+      .hero-search-bar { height: auto; flex-direction: column; padding: 0.85rem; border-radius: 1.25rem; }
+      .hunt-submit-btn { width: 100%; height: 50px; }
+      .hero-main-title { font-size: 1.85rem; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Atmosphere -->
+  <div class="bg-gradient-glow"></div>
+  <div class="bg-grid-pattern"></div>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-mark">⚡</div>
+      <div>
+        <h1 class="logo-title">HUNTER <span class="gradient-text">3D</span></h1>
+        <p class="logo-subtitle">Autonomous E-Commerce Product & Niche Hunter</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="system-status">
+        <span class="status-indicator live"></span>
+        <span class="status-text">AUTONOMOUS SCOUT ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Portal Workspace -->
+  <div class="portal-container">
+    
+    <!-- Hero Search Section -->
+    <section class="hero-search-section">
+      <div class="hero-title-area">
+        <h2 class="hero-main-title">Hunt High-Margin E-Commerce Opportunities</h2>
+        <p class="hero-description">Enter any product concept or click a trending niche below. Our deterministic mathematical gates and qualitative AI agents scout facts, Amazon fees, and moats instantly.</p>
+      </div>
+
+      <!-- Large Aligned Hero Search Bar -->
+      <form class="hero-search-bar glass-card" onsubmit="event.preventDefault(); window.triggerAutoHuntClick();">
+        <div class="search-input-box">
+          <div class="search-icon-orb">🔍</div>
+          <input 
+            type="text" 
+            id="auto-hunt-keyword" 
+            placeholder="Enter any product idea (e.g. Silicone Ice Roller, Matcha Whisk, MagSafe Stand)..." 
+            autocomplete="off"
+            value="Silicone Facial Ice Roller"
+          />
+          <button type="button" class="clear-search-btn" id="clear-search-btn" onclick="clearSearchInput()">✕</button>
+        </div>
+        <button type="submit" class="hunt-submit-btn" id="auto-hunt-btn">
+          <span>⚡ 1-CLICK AUTO HUNT</span>
+        </button>
+      </form>
+
+      <!-- Quick Trending Pills -->
+      <div class="trending-pills-row">
+        <span class="trend-label">🔥 Quick Scout:</span>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Ice Roller')">🧊 Ice Roller</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Matcha Whisk')">🍵 Matcha Whisk</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('MagSafe Stand')">📱 MagSafe Stand</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Posture Corrector')">🏋️ Posture Corrector</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Bamboo Desk Organizer')">📁 Bamboo Organizer</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('French Press')">☕ French Press</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Acupressure Mat')">🧘 Acupressure Mat</button>
+        <button type="button" class="trend-pill" onclick="quickScoutKeyword('Sunrise Alarm Clock')">💡 Sunrise Clock</button>
+      </div>
+    </section>
+
+    <!-- Trending Niches Section (Fluid Responsive Grid - No Horizontal Scrollbars) -->
+    <section class="trending-deck-section">
+      <div class="deck-header-bar">
+        <div class="deck-title-wrap">
+          <span class="deck-icon-glow">🔥</span>
+          <div>
+            <h3 class="deck-title">Top High-Velocity E-Commerce Niches</h3>
+            <p class="deck-subtitle">Click ANY niche to inspect the complete 3D Spatial Radar & Multi-Agent Intelligence Dossier</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Responsive Cards Grid -->
+      <div class="niche-cards-grid">
+        <!-- Card 1 -->
+        <div class="niche-card" onclick="huntAndRedirect('Ice Roller')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#01</div>
+            <span class="cagr-badge green">+14.5% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">🧊</span>
+            <h4 class="niche-card-title">Silicone Facial Ice Roller</h4>
+            <span class="niche-card-cat">Beauty & Personal Care</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">32,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$65,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">39.7%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Ice Roller');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="niche-card" onclick="huntAndRedirect('Matcha Whisk')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#02</div>
+            <span class="cagr-badge green">+12.0% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">🍵</span>
+            <h4 class="niche-card-title">Bamboo Matcha Whisk & Scoop</h4>
+            <span class="niche-card-cat">Home & Kitchen</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">24,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$52,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">39.7%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Matcha Whisk');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="niche-card" onclick="huntAndRedirect('MagSafe Stand')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#03</div>
+            <span class="cagr-badge green">+18.5% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">📱</span>
+            <h4 class="niche-card-title">Aluminum MagSafe Desk Stand</h4>
+            <span class="niche-card-cat">Electronics & Accessories</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">45,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$98,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">34.8%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('MagSafe Stand');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="niche-card" onclick="huntAndRedirect('Posture Corrector')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#04</div>
+            <span class="cagr-badge green">+10.2% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">🏋️</span>
+            <h4 class="niche-card-title">Ergonomic Posture Corrector</h4>
+            <span class="niche-card-cat">Sports & Outdoors</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">38,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$76,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">32.4%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Posture Corrector');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="niche-card" onclick="huntAndRedirect('Bamboo Desk Organizer')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#05</div>
+            <span class="cagr-badge green">+9.2% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">📁</span>
+            <h4 class="niche-card-title">Bamboo Modular Desk Organizer</h4>
+            <span class="niche-card-cat">Office Products</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">16,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$34,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">30.1%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Bamboo Desk Organizer');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="niche-card" onclick="huntAndRedirect('French Press')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#06</div>
+            <span class="cagr-badge green">+7.8% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">☕</span>
+            <h4 class="niche-card-title">Stainless Insulated French Press</h4>
+            <span class="niche-card-cat">Home & Kitchen</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">28,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$60,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">33.5%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('French Press');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="niche-card" onclick="huntAndRedirect('Acupressure Mat')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#07</div>
+            <span class="cagr-badge green">+15.2% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">🧘</span>
+            <h4 class="niche-card-title">Acupressure Mat & Pillow Set</h4>
+            <span class="niche-card-cat">Sports & Wellness</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">21,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$48,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">35.0%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Acupressure Mat');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="niche-card" onclick="huntAndRedirect('Sunrise Alarm Clock')">
+          <div class="niche-card-header">
+            <div class="niche-card-rank">#08</div>
+            <span class="cagr-badge green">+22.0% CAGR</span>
+          </div>
+          <div class="niche-card-body">
+            <span class="niche-card-emoji">💡</span>
+            <h4 class="niche-card-title">Sunrise Simulation Wake Light</h4>
+            <span class="niche-card-cat">Smart Home Electronics</span>
+          </div>
+          <div class="niche-card-stats">
+            <div class="niche-stat">
+              <span class="niche-stat-label">Demand</span>
+              <span class="niche-stat-val">50,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Revenue</span>
+              <span class="niche-stat-val green">$120,000/mo</span>
+            </div>
+            <div class="niche-stat">
+              <span class="niche-stat-label">Net Margin</span>
+              <span class="niche-stat-val green">28.0%</span>
+            </div>
+          </div>
+          <button type="button" class="niche-card-hunt-btn" onclick="event.stopPropagation(); huntAndRedirect('Sunrise Alarm Clock');">
+            <span>⚡ Auto Hunt & View Dossier →</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /**
+     * HUNTER 3D // Portal Navigation & Event Handlers
+     */
+    window.huntAndRedirect = function(keyword) {
+      var kw = (keyword || '').trim();
+      if (!kw) {
+        var inputEl = document.getElementById('auto-hunt-keyword');
+        kw = inputEl ? inputEl.value.trim() : "";
+      }
+      if (!kw) kw = "Silicone Facial Ice Roller";
+      window.location.href = '/report?q=' + encodeURIComponent(kw);
+    };
+
+    window.triggerAutoHuntClick = function() {
+      var inputEl = document.getElementById('auto-hunt-keyword');
+      var kw = inputEl ? inputEl.value.trim() : "";
+      if (!kw) kw = "Silicone Facial Ice Roller";
+      window.location.href = '/report?q=' + encodeURIComponent(kw);
+    };
+
+    window.quickScoutKeyword = function(keyword) {
+      window.huntAndRedirect(keyword);
+    };
+
+    window.clearSearchInput = function() {
+      var inputEl = document.getElementById('auto-hunt-keyword');
+      if (inputEl) {
+        inputEl.value = '';
+        inputEl.focus();
+      }
+      var clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.style.display = 'none';
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var autoHuntInput = document.getElementById('auto-hunt-keyword');
+      if (autoHuntInput) {
+        autoHuntInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            window.triggerAutoHuntClick();
+          }
+        });
+        autoHuntInput.addEventListener('input', function(e) {
+          var clearBtn = document.getElementById('clear-search-btn');
+          if (clearBtn) clearBtn.style.display = e.target.value.trim() ? 'flex' : 'none';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

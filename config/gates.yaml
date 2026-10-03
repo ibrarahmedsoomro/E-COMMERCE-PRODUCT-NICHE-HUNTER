@@ -1,0 +1,30 @@
+# Single Source of Truth for Deterministic Hard Gates
+# A product must pass all enabled hard gates before advancing to deep LLM analysis.
+
+gates:
+  # Unit Economics Hard Gates
+  min_gross_margin_pct: 30.0         # Absolute minimum gross profit margin (%)
+  min_net_margin_pct: 15.0           # Absolute minimum net profit margin (%)
+  min_price_usd: 15.0                # Floor selling price (below this, FBA fees eat all margin)
+  max_price_usd: 250.0               # Ceiling selling price for impulse/e-commerce sweet spot
+  min_roi_pct: 100.0                 # Return on Investment (Net Profit / COGS)
+
+  # Physical & Shipping Constraints
+  max_weight_lbs: 4.5                # Maximum packaged shipping weight in pounds
+  max_longest_side_inches: 18.0      # Standard size tier cutoff
+  max_fragility_tier: 2              # 1 = Low (Plastics/Textiles), 2 = Medium, 3 = High (Glass/Ceramics/Liquids)
+
+  # Demand & Search Traction Gates
+  min_monthly_search_volume: 3000    # Primary keyword monthly volume floor
+  min_monthly_revenue_usd: 5000.0    # Estimated niche revenue threshold
+  min_market_cagr_pct: 3.0           # Minimum annual category/niche growth rate
+
+  # Competitive Intensity Gates
+  max_dominant_brand_share_pct: 65.0 # Max revenue captured by the #1 top brand
+  max_top_3_brand_share_pct: 85.0    # Max revenue captured by top 3 brands
+  max_avg_review_count: 2500         # If top 10 competitors average > 2500 reviews, barriers are too high
+
+  # Data Integrity & Risk Gates
+  min_independent_sources: 2         # Minimum distinct data providers required for validation
+  critic_critical_veto: true         # If Critic Agent finds CRITICAL risk -> Immediate Auto-REJECT
+  critic_high_risk_max_status: "WATCHLIST" # High risk caps product at WATCHLIST (never auto-LAUNCH)

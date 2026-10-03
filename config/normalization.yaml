@@ -1,0 +1,70 @@
+# Deterministic Metric Normalization (0 - 100 Scale)
+# Each metric defines:
+#   min_val: Baseline value that maps to score 0 (or lower boundary)
+#   target_val: Optimal/healthy benchmark that maps to score 75
+#   max_val: Exceptional value that maps to score 100
+#   curve_type: "linear", "logarithmic", or "inverted" (where lower is better, e.g. review count barrier)
+
+normalization:
+  # 1. Gross Profit Margin (%)
+  gross_margin_pct:
+    min_val: 20.0
+    target_val: 45.0
+    max_val: 70.0
+    curve_type: "linear"
+
+  # 2. Net Profit Margin (%)
+  net_margin_pct:
+    min_val: 10.0
+    target_val: 25.0
+    max_val: 45.0
+    curve_type: "linear"
+
+  # 3. Monthly Search Volume (units/month)
+  monthly_search_volume:
+    min_val: 2000.0
+    target_val: 12000.0
+    max_val: 60000.0
+    curve_type: "logarithmic"
+
+  # 4. Market CAGR Growth (%)
+  market_cagr_pct:
+    min_val: 0.0
+    target_val: 8.0
+    max_val: 25.0
+    curve_type: "linear"
+
+  # 5. Average Competitor Review Rating (Inverted opportunity: lower competitor rating = higher opportunity score)
+  competitor_avg_rating:
+    min_val: 3.5
+    target_val: 4.1
+    max_val: 4.7
+    curve_type: "inverted"
+
+  # 6. Competitor Average Review Count (Inverted: low barrier = high opportunity)
+  competitor_avg_reviews:
+    min_val: 50.0
+    target_val: 400.0
+    max_val: 2500.0
+    curve_type: "inverted_logarithmic"
+
+  # 7. Google Trends Momentum Slope (-1.0 to +1.0 normalized trend velocity)
+  trend_momentum_slope:
+    min_val: -0.2
+    target_val: 0.2
+    max_val: 0.8
+    curve_type: "linear"
+
+  # 8. Pain Point Intensity (LLM Agent 0 to 10 scale -> converted to 0 to 100)
+  pain_point_intensity:
+    min_val: 0.0
+    target_val: 7.0
+    max_val: 10.0
+    curve_type: "linear"
+
+  # 9. Differentiation Moat Strength (LLM Agent 0 to 10 scale)
+  moat_strength:
+    min_val: 0.0
+    target_val: 7.0
+    max_val: 10.0
+    curve_type: "linear"

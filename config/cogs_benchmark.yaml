@@ -1,0 +1,46 @@
+# Category-wise COGS Ratio Benchmarks (Pre-Gate Estimate)
+# When real factory/supplier quotes are not yet fetched, estimated COGS = Retail Price * ratio.
+
+cogs_benchmarks:
+  categories:
+    home_and_kitchen:
+      cogs_ratio: 0.22             # 22% of retail price
+      avg_shipping_cost_pct: 0.08  # 8% of retail price
+      typical_return_rate_pct: 3.5
+    beauty_and_personal_care:
+      cogs_ratio: 0.16
+      avg_shipping_cost_pct: 0.05
+      typical_return_rate_pct: 2.5
+    sports_and_outdoors:
+      cogs_ratio: 0.24
+      avg_shipping_cost_pct: 0.09
+      typical_return_rate_pct: 4.0
+    electronics_accessories:
+      cogs_ratio: 0.19
+      avg_shipping_cost_pct: 0.06
+      typical_return_rate_pct: 5.0
+    pet_supplies:
+      cogs_ratio: 0.21
+      avg_shipping_cost_pct: 0.08
+      typical_return_rate_pct: 3.0
+    toys_and_games:
+      cogs_ratio: 0.20
+      avg_shipping_cost_pct: 0.07
+      typical_return_rate_pct: 4.5
+    office_products:
+      cogs_ratio: 0.23
+      avg_shipping_cost_pct: 0.06
+      typical_return_rate_pct: 2.0
+    tools_and_home_improvement:
+      cogs_ratio: 0.27
+      avg_shipping_cost_pct: 0.10
+      typical_return_rate_pct: 3.8
+    apparel_accessories:
+      cogs_ratio: 0.18
+      avg_shipping_cost_pct: 0.05
+      typical_return_rate_pct: 9.0  # High return rate category
+
+  default:
+    cogs_ratio: 0.25
+    avg_shipping_cost_pct: 0.08
+    typical_return_rate_pct: 4.0
