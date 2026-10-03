@@ -131,114 +131,27 @@ def auto_hunt_keyword(req: AutoHuntRequest):
 
 
 @app.get("/api/trending-niches")
-def get_trending_niches():
-    niches = [
-        {
-            "rank": "01",
-            "icon": "🧊",
-            "keyword": "Ice Roller",
-            "title": "Cryotherapy Silicone Facial Ice Roller",
-            "category": "Beauty & Personal Care",
-            "search_volume": 32000,
-            "monthly_revenue": 65000,
-            "cagr": 14.5,
-            "competition": "Low",
-            "net_margin": 39.7,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "02",
-            "icon": "🍵",
-            "keyword": "Matcha Whisk",
-            "title": "Traditional Bamboo Matcha Whisk & Scoop Set",
-            "category": "Home & Kitchen",
-            "search_volume": 24000,
-            "monthly_revenue": 52000,
-            "cagr": 12.0,
-            "competition": "Low",
-            "net_margin": 39.7,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "03",
-            "icon": "📱",
-            "keyword": "MagSafe Stand",
-            "title": "Foldable Aluminum MagSafe Desk Stand",
-            "category": "Electronics & Accessories",
-            "search_volume": 45000,
-            "monthly_revenue": 98000,
-            "cagr": 18.5,
-            "competition": "Moderate",
-            "net_margin": 34.8,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "04",
-            "icon": "🏋️",
-            "keyword": "Posture Corrector",
-            "title": "Breathable Ergonomic Posture Corrector Brace",
-            "category": "Sports & Outdoors",
-            "search_volume": 38000,
-            "monthly_revenue": 76000,
-            "cagr": 10.2,
-            "competition": "Moderate",
-            "net_margin": 32.4,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "05",
-            "icon": "📁",
-            "keyword": "Bamboo Desk Organizer",
-            "title": "Ergonomic Bamboo Desk Organizer",
-            "category": "Office Products",
-            "search_volume": 16000,
-            "monthly_revenue": 34000,
-            "cagr": 9.2,
-            "competition": "Low",
-            "net_margin": 30.1,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "06",
-            "icon": "☕",
-            "keyword": "French Press",
-            "title": "Double-Wall Stainless French Press Brewer",
-            "category": "Home & Kitchen",
-            "search_volume": 28000,
-            "monthly_revenue": 60000,
-            "cagr": 7.8,
-            "competition": "Moderate",
-            "net_margin": 33.5,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "07",
-            "icon": "🧘",
-            "keyword": "Acupressure Mat",
-            "title": "Acupressure Mat & Ergonomic Neck Pillow Set",
-            "category": "Sports & Wellness",
-            "search_volume": 21000,
-            "monthly_revenue": 48000,
-            "cagr": 15.2,
-            "competition": "Low",
-            "net_margin": 35.0,
-            "verdict": "LAUNCH"
-        },
-        {
-            "rank": "08",
-            "icon": "💡",
-            "keyword": "Sunrise Alarm Clock",
-            "title": "Smart Sunrise Simulation Wake-Up Light",
-            "category": "Smart Home Electronics",
-            "search_volume": 50000,
-            "monthly_revenue": 120000,
-            "cagr": 22.0,
-            "competition": "High",
-            "net_margin": 28.0,
-            "verdict": "WATCHLIST"
-        }
-    ]
-    return {"niches": niches}
+def get_trending_niches(
+    category: str = "all",
+    refresh: bool = False,
+    min_margin: float = 25.0,
+    sort_by: str = "profit"
+):
+    from engine.live_niche_discovery import live_discovery_service
+    niches = live_discovery_service.discover(
+        category=category,
+        refresh=refresh,
+        min_margin=min_margin,
+        sort_by=sort_by
+    )
+    categories = live_discovery_service.get_categories()
+    return {"niches": niches, "categories": categories, "count": len(niches)}
+
+
+@app.get("/api/categories")
+def get_categories():
+    from engine.live_niche_discovery import live_discovery_service
+    return {"categories": live_discovery_service.get_categories()}
 
 
 @app.get("/api/history")

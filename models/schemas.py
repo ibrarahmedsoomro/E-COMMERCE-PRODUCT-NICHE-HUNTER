@@ -45,21 +45,87 @@ class ProductInput(BaseModel):
     reviews_raw_text: Optional[List[str]] = Field(default_factory=list)
 
 
-class UnitEconomics(BaseModel):
+class EconomicConfidenceItem(BaseModel):
+    label: str
+    status: str  # "VERIFIED" | "ESTIMATED" | "BENCHMARKED"
+    description: str
+
+
+class EconomicConfidenceAudit(BaseModel):
+    overall_confidence_pct: float
+    verified_count: int
+    total_checks: int
+    items: List[EconomicConfidenceItem]
+
+
+class ScenarioMetrics(BaseModel):
+    scenario_name: str
     retail_price_usd: float
+    ad_cac_usd: float
+    return_rate_pct: float
+    contribution_profit_usd: float
+    contribution_margin_pct: float
+    roi_pct: float
+    is_viable: bool
+
+
+class ScenarioAnalysis(BaseModel):
+    conservative: ScenarioMetrics
+    base: ScenarioMetrics
+    upside: ScenarioMetrics
+    breakeven_price_floor_usd: float
+    max_tolerable_ad_cac_usd: float
+    max_tolerable_return_rate_pct: float
+    worst_case_survival_status: str  # "SURVIVES" | "CONDITIONAL" | "FAILS"
+
+
+class UnitEconomics(BaseModel):
+    # Tier 1: Revenue
+    retail_price_usd: float
+
+    # Tier 2: Variable Product Costs
     cogs_usd: float
     shipping_to_warehouse_usd: float
+    duty_import_tax_usd: float = 0.0
+    packaging_prep_usd: float = 0.0
+
+    # Tier 3: Amazon Seller Fees
     amazon_referral_fee_usd: float
     amazon_fba_fee_usd: float
-    estimated_ad_spend_usd: float
-    estimated_returns_loss_usd: float
-    total_costs_usd: float
+    fba_inbound_placement_usd: float = 0.0
+    monthly_storage_fee_usd: float = 0.0
+
+    # Tier 4: Marketing & Customer Acquisition
+    ad_cac_per_order_usd: float = 0.0
+    target_tacos_pct: float = 12.0
+    estimated_ad_spend_usd: float = 0.0
+    coupon_promo_cost_usd: float = 0.0
+
+    # Tier 5: Risk & Return Reserves
+    return_rate_reserve_usd: float = 0.0
+    defect_reserve_usd: float = 0.0
+    estimated_returns_loss_usd: float = 0.0
+
+    # Profitability Hierarchy
+    total_variable_costs_usd: float = 0.0
+    total_costs_usd: float = 0.0
     gross_profit_usd: float
-    net_profit_usd: float
     gross_margin_pct: float
+
+    contribution_profit_usd: float = 0.0
+    contribution_margin_pct: float = 0.0
+
+    allocated_overhead_usd: float = 0.0
+    operating_profit_usd: float = 0.0
+    operating_margin_pct: float = 0.0
+
+    net_profit_usd: float
     net_margin_pct: float
     roi_pct: float
+
     is_pre_gate_estimate: bool = False
+    confidence_audit: Optional[EconomicConfidenceAudit] = None
+    scenario_analysis: Optional[ScenarioAnalysis] = None
 
 
 class GateCheckResult(BaseModel):

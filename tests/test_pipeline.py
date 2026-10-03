@@ -23,14 +23,14 @@ def test_pipeline_winner_product():
         supplier_shipping_usd=1.80,
         shipping_weight_lbs=1.4,
         longest_side_inches=12.0,
-        monthly_search_volume=14000,
-        monthly_revenue_usd=32000.0,
-        market_cagr_pct=9.2,
-        dominant_brand_share_pct=24.0,
-        top_3_brand_share_pct=48.0,
-        competitor_avg_rating=4.0,
-        competitor_avg_reviews=450,
-        data_sources=["keepa", "trends", "reddit"]
+        monthly_search_volume=18000,
+        monthly_revenue_usd=42000.0,
+        market_cagr_pct=12.5,
+        dominant_brand_share_pct=18.0,
+        top_3_brand_share_pct=38.0,
+        competitor_avg_rating=3.9,
+        competitor_avg_reviews=220,
+        data_sources=["keepa", "trends", "reddit", "alibaba"]
     )
 
     dossier = pipeline.evaluate_product(product)
