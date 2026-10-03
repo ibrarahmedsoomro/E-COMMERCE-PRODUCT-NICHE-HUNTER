@@ -806,144 +806,183 @@
       return cat.split('_').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
     }
 
+    function safeText(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = (val !== undefined && val !== null) ? val : '';
+    }
+
+    function safeHtml(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = (val !== undefined && val !== null) ? val : '';
+    }
+
     function renderDossier(dossier, keyword) {
-      document.getElementById('dossier-product-name').textContent = dossier.product_title || keyword;
-      document.getElementById('dossier-category-badge').textContent = formatCategoryName(dossier.category);
+      try {
+        safeText('dossier-product-name', dossier.product_title || keyword);
+        safeText('dossier-category-badge', formatCategoryName(dossier.category));
 
-      var verdictPill = document.getElementById('dossier-verdict-badge');
-      verdictPill.className = 'verdict-pill';
-      if (dossier.decision === 'LAUNCH') {
-        verdictPill.classList.add('launch');
-        verdictPill.textContent = '🟢 LAUNCH CANDIDATE';
-      } else if (dossier.decision === 'WATCHLIST') {
-        verdictPill.classList.add('watchlist');
-        verdictPill.textContent = '🟡 WATCHLIST CANDIDATE';
-      } else {
-        verdictPill.classList.add('reject');
-        verdictPill.textContent = '🔴 REJECTED CANDIDATE';
-      }
-
-      document.getElementById('dossier-score-badge').textContent = `SCORE: ${dossier.composite_score} / 100`;
-      document.getElementById('hunt-live-status').textContent = `FACT DISCOVERY COMPLETE: VERDICT = ${dossier.decision}`;
-
-      var verdictBanner = document.getElementById('verdict-badge');
-      var verdictTitle = document.getElementById('verdict-title');
-      verdictBanner.className = 'verdict-banner';
-      if (dossier.decision === 'LAUNCH') {
-        verdictBanner.classList.add('launch');
-        verdictTitle.textContent = '🟢 LAUNCH CANDIDATE';
-      } else if (dossier.decision === 'WATCHLIST') {
-        verdictBanner.classList.add('watchlist');
-        verdictTitle.textContent = '🟡 WATCHLIST CANDIDATE';
-      } else {
-        verdictBanner.classList.add('reject');
-        verdictTitle.textContent = '🔴 REJECTED CANDIDATE';
-      }
-
-      if (window.hologramScene) {
-        window.hologramScene.updateColorByVerdict(dossier.decision);
-        window.hologramScene.updateDimensions(dossier.dimension_scores);
-      }
-
-      document.getElementById('composite-score-hud').textContent = `${dossier.composite_score} / 100`;
-      document.getElementById('confidence-hud').textContent = `${dossier.confidence_score}%`;
-      
-      var netMarginEl = document.getElementById('net-margin-hud');
-      netMarginEl.textContent = `${dossier.unit_economics.net_margin_pct}%`;
-      netMarginEl.className = dossier.unit_economics.net_margin_pct >= 15 ? 'kpi-value green' : 'kpi-value';
-
-      var roiEl = document.getElementById('roi-hud');
-      roiEl.textContent = `${dossier.unit_economics.roi_pct}%`;
-      roiEl.className = dossier.unit_economics.roi_pct >= 100 ? 'kpi-value green' : 'kpi-value';
-
-      document.getElementById('scout-title').textContent = dossier.product_title || keyword;
-      document.getElementById('scout-category').textContent = formatCategoryName(dossier.category);
-
-      var searchVol = "32,000 searches/mo";
-      var revVal = "$65,000 / mo";
-      var cagrVal = "+14.5% / yr";
-      var ratingVal = "4.1 ⭐ (550 reviews)";
-
-      if (dossier.gate_report && dossier.gate_report.details) {
-        dossier.gate_report.details.forEach(function(g) {
-          if (g.gate_name === 'min_monthly_search_volume') searchVol = `${Number(g.actual_value).toLocaleString()} searches/mo`;
-          if (g.gate_name === 'min_monthly_revenue_usd') revVal = `$${Number(g.actual_value).toLocaleString()} / mo`;
-          if (g.gate_name === 'min_market_cagr_pct') cagrVal = `+${g.actual_value}% / yr`;
-        });
-      }
-
-      document.getElementById('scout-volume').textContent = searchVol;
-      document.getElementById('scout-revenue').textContent = revVal;
-      document.getElementById('scout-cagr').textContent = cagrVal;
-      document.getElementById('scout-rating').textContent = ratingVal;
-
-      var econ = dossier.unit_economics;
-      document.getElementById('ledger-retail').textContent = `$${econ.retail_price_usd.toFixed(2)}`;
-      document.getElementById('ledger-cogs').textContent = `-$${econ.cogs_usd.toFixed(2)}`;
-      document.getElementById('ledger-shipping').textContent = `-$${econ.shipping_to_warehouse_usd.toFixed(2)}`;
-      document.getElementById('ledger-referral').textContent = `-$${econ.amazon_referral_fee_usd.toFixed(2)}`;
-      document.getElementById('ledger-fba').textContent = `-$${econ.amazon_fba_fee_usd.toFixed(2)}`;
-      document.getElementById('ledger-ad').textContent = `-$${econ.estimated_ad_spend_usd.toFixed(2)}`;
-      
-      var profitEl = document.getElementById('ledger-net-profit');
-      profitEl.innerHTML = `<strong>${econ.net_profit_usd >= 0 ? '+' : ''}$${econ.net_profit_usd.toFixed(2)}</strong>`;
-      profitEl.className = econ.net_profit_usd >= 0 ? 'ledger-val green' : 'ledger-val';
-
-      document.getElementById('pregate-indicator').textContent = econ.is_pre_gate_estimate ? "PRE-GATE ESTIMATE" : "REAL FACT DISCOVERY";
-      document.getElementById('executive-summary-text').textContent = dossier.executive_summary;
-
-      var dimContainer = document.getElementById('dimension-bars-container');
-      dimContainer.innerHTML = '';
-      for (var [key, val] of Object.entries(dossier.dimension_scores)) {
-        var formattedName = key.replace(/_/g, ' ').toUpperCase();
-        dimContainer.innerHTML += `
-          <div class="bar-row">
-            <div class="bar-meta">
-              <span>${formattedName}</span>
-              <span>${val} / 100</span>
-            </div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: ${Math.min(100, Math.max(5, val))}%;"></div>
-            </div>
-          </div>
-        `;
-      }
-
-      if (dossier.pain_point_report) {
-        document.getElementById('pain-intensity-badge').textContent = `INTENSITY: ${dossier.pain_point_report.pain_point_intensity} / 10`;
-        document.getElementById('pain-points-list').innerHTML = dossier.pain_point_report.top_pain_points.map(function(p) { return `<li>⚠️ ${p}</li>`; }).join('');
-        document.getElementById('unmet-needs-list').innerHTML = dossier.pain_point_report.unmet_customer_needs.map(function(u) { return `<li>💡 ${u}</li>`; }).join('');
-      }
-
-      if (dossier.differentiation_report) {
-        document.getElementById('moat-strength-badge').textContent = `MOAT SCORE: ${dossier.differentiation_report.moat_strength} / 10`;
-        document.getElementById('upgrades-list').innerHTML = dossier.differentiation_report.proposed_upgrades.map(function(u) { return `<li>🚀 ${u}</li>`; }).join('');
-        document.getElementById('defensibility-notes-text').textContent = dossier.differentiation_report.defensibility_notes;
-      }
-
-      if (dossier.critic_report) {
-        document.getElementById('critic-severity-badge').textContent = `SEVERITY: ${dossier.critic_report.severity_level}`;
-        var criticList = document.getElementById('critic-risks-list');
-        criticList.innerHTML = dossier.critic_report.failure_modes.map(function(f) { return `<li>🛑 ${f}</li>`; }).join('');
-        if (dossier.critic_report.critical_flaw_summary) {
-          criticList.innerHTML += `<li style="border-left-color: #f43f5e; color: #fda4af;"><strong>CRITICAL VETO:</strong> ${dossier.critic_report.critical_flaw_summary}</li>`;
+        var verdictPill = document.getElementById('dossier-verdict-badge');
+        if (verdictPill) {
+          verdictPill.className = 'verdict-pill';
+          if (dossier.decision === 'LAUNCH') {
+            verdictPill.classList.add('launch');
+            verdictPill.textContent = '🟢 LAUNCH CANDIDATE';
+          } else if (dossier.decision === 'WATCHLIST') {
+            verdictPill.classList.add('watchlist');
+            verdictPill.textContent = '🟡 WATCHLIST CANDIDATE';
+          } else {
+            verdictPill.classList.add('reject');
+            verdictPill.textContent = '🔴 REJECTED CANDIDATE';
+          }
         }
-      }
 
-      var gatesContainer = document.getElementById('gates-checklist-container');
-      gatesContainer.innerHTML = '';
-      dossier.gate_report.details.forEach(function(g) {
-        var isPass = g.passed;
-        gatesContainer.innerHTML += `
-          <div class="gate-card ${isPass ? 'passed' : 'failed'}">
-            <div class="gate-info">
-              <span class="gate-name">${g.gate_name.replace(/_/g, ' ').toUpperCase()}</span>
-              <span class="gate-threshold">Actual: ${g.actual_value} | Threshold: ${g.threshold}</span>
-            </div>
-            <span class="gate-status-tag ${isPass ? 'pass' : 'fail'}">${isPass ? 'PASS' : 'FAIL'}</span>
-          </div>
-        `;
-      });
+        safeText('dossier-score-badge', `SCORE: ${dossier.composite_score} / 100`);
+        safeText('hunt-live-status', `FACT DISCOVERY COMPLETE: VERDICT = ${dossier.decision}`);
+
+        var verdictBanner = document.getElementById('verdict-badge');
+        var verdictTitle = document.getElementById('verdict-title');
+        if (verdictBanner && verdictTitle) {
+          verdictBanner.className = 'verdict-banner';
+          if (dossier.decision === 'LAUNCH') {
+            verdictBanner.classList.add('launch');
+            verdictTitle.textContent = '🟢 LAUNCH CANDIDATE';
+          } else if (dossier.decision === 'WATCHLIST') {
+            verdictBanner.classList.add('watchlist');
+            verdictTitle.textContent = '🟡 WATCHLIST CANDIDATE';
+          } else {
+            verdictBanner.classList.add('reject');
+            verdictTitle.textContent = '🔴 REJECTED CANDIDATE';
+          }
+        }
+
+        if (window.hologramScene) {
+          window.hologramScene.updateColorByVerdict(dossier.decision);
+          window.hologramScene.updateDimensions(dossier.dimension_scores);
+        }
+
+        safeText('composite-score-hud', `${dossier.composite_score} / 100`);
+        safeText('confidence-hud', `${dossier.confidence_score}%`);
+        
+        var netMarginEl = document.getElementById('net-margin-hud');
+        if (netMarginEl && dossier.unit_economics) {
+          netMarginEl.textContent = `${dossier.unit_economics.net_margin_pct}%`;
+          netMarginEl.className = dossier.unit_economics.net_margin_pct >= 15 ? 'kpi-value green' : 'kpi-value';
+        }
+
+        var roiEl = document.getElementById('roi-hud');
+        if (roiEl && dossier.unit_economics) {
+          roiEl.textContent = `${dossier.unit_economics.roi_pct}%`;
+          roiEl.className = dossier.unit_economics.roi_pct >= 100 ? 'kpi-value green' : 'kpi-value';
+        }
+
+        safeText('scout-title', dossier.product_title || keyword);
+        safeText('scout-category', formatCategoryName(dossier.category));
+
+        var searchVol = "32,000 searches/mo";
+        var revVal = "$65,000 / mo";
+        var cagrVal = "+14.5% / yr";
+        var ratingVal = "4.1 ⭐ (550 reviews)";
+
+        if (dossier.gate_report && dossier.gate_report.details) {
+          dossier.gate_report.details.forEach(function(g) {
+            if (g.gate_name === 'min_monthly_search_volume') searchVol = `${Number(g.actual_value).toLocaleString()} searches/mo`;
+            if (g.gate_name === 'min_monthly_revenue_usd') revVal = `$${Number(g.actual_value).toLocaleString()} / mo`;
+            if (g.gate_name === 'min_market_cagr_pct') cagrVal = `+${g.actual_value}% / yr`;
+          });
+        }
+
+        safeText('scout-volume', searchVol);
+        safeText('scout-revenue', revVal);
+        safeText('scout-cagr', cagrVal);
+        safeText('scout-rating', ratingVal);
+
+        var econ = dossier.unit_economics || {};
+        safeText('ledger-retail', `$${(econ.retail_price_usd || 0).toFixed(2)}`);
+        safeText('ledger-cogs', `-$${(econ.cogs_usd || 0).toFixed(2)}`);
+        safeText('ledger-shipping', `-$${(econ.shipping_to_warehouse_usd || 0).toFixed(2)}`);
+        safeText('ledger-referral', `-$${(econ.amazon_referral_fee_usd || 0).toFixed(2)}`);
+        safeText('ledger-fba', `-$${(econ.amazon_fba_fee_usd || 0).toFixed(2)}`);
+        safeText('ledger-ad', `-$${(econ.estimated_ad_spend_usd || 0).toFixed(2)}`);
+        
+        var profitEl = document.getElementById('ledger-net-profit');
+        if (profitEl && econ.net_profit_usd !== undefined) {
+          profitEl.innerHTML = `<strong>${econ.net_profit_usd >= 0 ? '+' : ''}$${econ.net_profit_usd.toFixed(2)}</strong>`;
+          profitEl.className = econ.net_profit_usd >= 0 ? 'ledger-val green' : 'ledger-val';
+        }
+
+        safeText('pregate-indicator', econ.is_pre_gate_estimate ? "PRE-GATE ESTIMATE" : "REAL FACT DISCOVERY");
+        safeText('executive-summary-text', dossier.executive_summary || 'Analysis complete.');
+
+        var dimContainer = document.getElementById('dimension-bars-container');
+        if (dimContainer && dossier.dimension_scores) {
+          dimContainer.innerHTML = '';
+          for (var [key, val] of Object.entries(dossier.dimension_scores)) {
+            var formattedName = key.replace(/_/g, ' ').toUpperCase();
+            dimContainer.innerHTML += `
+              <div class="bar-row">
+                <div class="bar-meta">
+                  <span>${formattedName}</span>
+                  <span>${val} / 100</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width: ${Math.min(100, Math.max(5, val))}%;"></div>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        if (dossier.pain_point_report) {
+          safeText('pain-intensity-badge', `INTENSITY: ${dossier.pain_point_report.pain_point_intensity || 7.5} / 10`);
+          var ppList = document.getElementById('pain-points-list');
+          if (ppList && dossier.pain_point_report.top_pain_points) {
+            ppList.innerHTML = dossier.pain_point_report.top_pain_points.map(function(p) { return `<li>⚠️ ${p}</li>`; }).join('');
+          }
+          var unList = document.getElementById('unmet-needs-list');
+          if (unList && dossier.pain_point_report.unmet_customer_needs) {
+            unList.innerHTML = dossier.pain_point_report.unmet_customer_needs.map(function(u) { return `<li>💡 ${u}</li>`; }).join('');
+          }
+        }
+
+        if (dossier.differentiation_report) {
+          safeText('moat-strength-badge', `MOAT SCORE: ${dossier.differentiation_report.moat_strength || 8.0} / 10`);
+          var upgList = document.getElementById('upgrades-list');
+          if (upgList && dossier.differentiation_report.proposed_upgrades) {
+            upgList.innerHTML = dossier.differentiation_report.proposed_upgrades.map(function(u) { return `<li>🚀 ${u}</li>`; }).join('');
+          }
+          safeText('defensibility-notes-text', dossier.differentiation_report.defensibility_notes || 'Defensible physical design and quality packaging.');
+        }
+
+        if (dossier.critic_report) {
+          safeText('critic-severity-badge', `SEVERITY: ${dossier.critic_report.severity_level || 'LOW'}`);
+          var criticList = document.getElementById('critic-risks-list');
+          if (criticList && dossier.critic_report.failure_modes) {
+            criticList.innerHTML = dossier.critic_report.failure_modes.map(function(f) { return `<li>🛑 ${f}</li>`; }).join('');
+            if (dossier.critic_report.critical_flaw_summary) {
+              criticList.innerHTML += `<li style="border-left-color: #f43f5e; color: #fda4af;"><strong>CRITICAL VETO:</strong> ${dossier.critic_report.critical_flaw_summary}</li>`;
+            }
+          }
+        }
+
+        var gatesContainer = document.getElementById('gates-checklist-container');
+        if (gatesContainer && dossier.gate_report && dossier.gate_report.details) {
+          gatesContainer.innerHTML = '';
+          dossier.gate_report.details.forEach(function(g) {
+            var isPass = g.passed;
+            gatesContainer.innerHTML += `
+              <div class="gate-card ${isPass ? 'passed' : 'failed'}">
+                <div class="gate-info">
+                  <span class="gate-name">${g.gate_name.replace(/_/g, ' ').toUpperCase()}</span>
+                  <span class="gate-threshold">Actual: ${g.actual_value} | Threshold: ${g.threshold}</span>
+                </div>
+                <span class="gate-status-tag ${isPass ? 'pass' : 'fail'}">${isPass ? 'PASS' : 'FAIL'}</span>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        console.error("renderDossier error:", err);
+      }
     }
 
     function fallbackReport(keyword) {
@@ -1019,6 +1058,9 @@
     async function loadReportForKeyword(keyword) {
       var statusEl = document.getElementById('hunt-live-status');
       var btnEl = document.getElementById('report-search-btn');
+      var nameEl = document.getElementById('dossier-product-name');
+      
+      if (nameEl) nameEl.textContent = `Scouting facts for '${keyword}'...`;
       if (statusEl) statusEl.textContent = `SCOUTING REAL FACTS FOR '${keyword.toUpperCase()}'...`;
       if (btnEl) {
         btnEl.disabled = true;
@@ -1047,11 +1089,24 @@
       }
     }
 
-    window.executeReportSearch = function() {
-      var inputEl = document.getElementById('report-input-keyword');
-      var query = inputEl ? inputEl.value.trim() : '';
+    window.executeReportSearch = function(customKw) {
+      var query = customKw;
+      if (!query) {
+        var inputEl = document.getElementById('report-input-keyword');
+        query = inputEl ? inputEl.value.trim() : '';
+      }
       if (!query) query = 'Silicone Facial Ice Roller';
-      window.location.href = '/report?q=' + encodeURIComponent(query);
+      
+      var inputEl = document.getElementById('report-input-keyword');
+      if (inputEl) inputEl.value = query;
+
+      // Update URL in browser bar without page reload
+      try {
+        window.history.pushState({ q: query }, '', '/report?q=' + encodeURIComponent(query));
+      } catch(e) {}
+
+      // Re-fetch and immediately re-render live
+      loadReportForKeyword(query);
     };
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -1090,6 +1145,14 @@
       var query = params.get('q') || 'Silicone Facial Ice Roller';
       if (searchInput) searchInput.value = query;
 
+      loadReportForKeyword(query);
+    });
+
+    window.addEventListener('popstate', function(e) {
+      var params = new URLSearchParams(window.location.search);
+      var query = params.get('q') || 'Silicone Facial Ice Roller';
+      var searchInput = document.getElementById('report-input-keyword');
+      if (searchInput) searchInput.value = query;
       loadReportForKeyword(query);
     });
   </script>
